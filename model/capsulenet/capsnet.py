@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from activation.activation import *
 from torch.autograd import Variable
 import pdb
-
+import math
 
 
 class AgreementRouting(nn.Module):
@@ -16,7 +16,7 @@ class AgreementRouting(nn.Module):
     def forward(self, u_predict):
         batch_size, input_caps, output_caps, output_dim = u_predict.size()
 
-        c = F.softmax(self.b)
+        c = F.softmax(self.b, dim=1)
         s = (c.unsqueeze(2) * u_predict).sum(dim=1)
         v = squash(s)
 
@@ -25,8 +25,7 @@ class AgreementRouting(nn.Module):
             for r in range(self.n_iterations):
                 v = v.unsqueeze(1)
                 b_batch = b_batch + (u_predict * v).sum(-1)
-
-                c = F.softmax(b_batch.view(-1, output_caps)).view(-1, input_caps, output_caps, 1)
+                c = F.softmax(b_batch.view(-1, output_caps),dim=1).view(-1, input_caps, output_caps, 1)
                 s = (c * u_predict).sum(dim=1)
                 v = squash(s)
 
@@ -49,7 +48,7 @@ class CapsLayer(nn.Module):
         self.weights.data.uniform_(-stdv, stdv)
 
     def forward(self, caps_output):
-        pdb.set_trace()
+        #pdb.set_trace()
         caps_output = caps_output.unsqueeze(2)
         u_predict = caps_output.matmul(self.weights)
         u_predict = u_predict.view(u_predict.size(0), self.input_caps, self.output_caps, self.output_dim)

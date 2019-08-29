@@ -3,15 +3,25 @@ import torch
 from utils.string_processing import *
 
 def fix_dir(args):
-    args.l_w_dir = ensure_terminator(args.l_w_dir)
-    args.train_dir = ensure_terminator(args.train_dir)
-    args.groundtruth_dir = ensure_terminator(args.groundtruth_dir)
-    args.s_w_dir = ensure_terminator(args.s_w_dir)
-    args.predict_dir = ensure_terminator(args.predict_dir)
-    args.result_dir = ensure_terminator(args.result_dir)
-    args.val_dir = ensure_terminator(args.val_dir)
-    args.val_groundtruth_dir = ensure_terminator(args.val_groundtruth_dir)
-    args.l_w_name = ensure_terminator(args.l_w_name, ".pth")
+    args.l_w_dir = ensure_path(args.l_w_dir)
+    args.train_dir = ensure_path(args.train_dir)
+    args.train_gt = ensure_path(args.train_gt)
+    args.s_w_dir = ensure_path(args.s_w_dir)
+    args.pred_dir = ensure_path(args.pred_dir)
+    args.result_dir = ensure_path(args.result_dir)
+    args.val_dir = ensure_path(args.val_dir)
+    args.val_gt = ensure_path(args.val_gt)
+    args.s_w_name = ensure_terminator(args.s_w_name, ".pth")
+
+    return args
+
+def load_hyperparams(args):
+    if not args.no_gpu and torch.cuda.is_available():
+        use_gpu = True
+    else:
+        use_gpu = False
+    args.gpu = use_gpu
+    args.no_gpu = not use_gpu
 
     return args
 
@@ -36,7 +46,7 @@ def get_args():
                         help='validation groundtruth')
     parser.add_argument('--pred-dir', type=str, default=None,
                         help='training directory')
-    parser.add_argument('--pred-gt', type=str, default=None,
+    parser.add_argument('--result-dir', type=str, default=None,
                         help='predict groundtruth')
 
     parser.add_argument('--s-w-dir', type=str, default=None,
@@ -68,25 +78,17 @@ def get_args():
     parser.add_argument('--train', action='store_true', default=False)
     parser.add_argument('--val', action='store_true', default=False)
     parser.add_argument('--pred', action='store_true', default=False)
+    parser.add_argument('--load', action='store_true', default=False)
 
+    parser.add_argument('--no-gpu', action='store_true', default=False,
+                        help='disable CUDA training')
+    parser.add_argument('--gpu', action='store_true', default=True,
+                        help='enable CUDA training')
 
-    parser.add_argument('--no-cuda', action='store_true', default=False,
-                        help='disables CUDA training')
-    parser.add_argument('--seed', type=int, default=1, metavar='S',
-                        help='random seed (default: 1)')
-    parser.add_argument('--log-interval', type=int, default=10, metavar='N',
+    parser.add_argument('--log-interval', type=int, default=1, metavar='N',
                         help='how many batches to wait before logging training status')
     parser.add_argument('--epoch-done', type=int, default=0,
                         help='how many training epochs have done')
-
-
-
-    args = parser.parse_args()
-    args.cuda = not args.no_cuda and torch.cuda.is_available()
-
-    torch.manual_seed(args.seed)
-    if args.cuda:
-        torch.cuda.manual_seed(args.seed)
 
     args = parser.parse_args()
 

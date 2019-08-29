@@ -4,6 +4,7 @@ from dataset import *
 import torch.utils.data as data
 from torch import optim
 from utils.saveload_hdd import *
+import pdb
 
 
 def get_model(args):
@@ -50,7 +51,7 @@ def get_dataloader(args):
 
     data_loader = data.DataLoader(dataset=dataloader_class, num_workers=1, batch_size=args.batch_size, shuffle=True)
 
-    return data_loader
+    return data_loader, len(dataloader_class)
 
 def get_optimizer(args, model):
     if args.optimizer == 'adam':

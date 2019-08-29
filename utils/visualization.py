@@ -19,20 +19,21 @@ def settings_summary(args):
             '''.format(args.dataset,
                        args.arch,
                        args.n_class,
+                       args.loss,
                        args.optimizer,
                        args.epochs,
                        args.batch_size,
                        args.lr,
-                       args.no_cuda
+                       args.gpu
                        ))
 
 def error_ttc_vis(epoch,num_batches,batch_idx,now,epochs, loss_item,time_epcch):
     if epoch == 0:
         later = time.time()
-        time_epoch = num_batches / (batch_idx + 1) * (later - now)
+        time_epcch = num_batches / (batch_idx + 1) * (later - now)
 
     remaining_epoch = epochs - epoch - (batch_idx + 1) / num_batches
-    estimated_time = remaining_epoch * time_epoch
+    estimated_time = remaining_epoch * time_epcch
     hour = math.floor(estimated_time / 3600)
     min1 = estimated_time % 3600
     min2 = math.floor(min1 / 60)

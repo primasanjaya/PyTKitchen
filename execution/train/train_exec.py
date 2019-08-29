@@ -10,21 +10,22 @@ def train_execution(args, model):
     #setup
     optimizer = get_optimizer(args,model)
     loss_fn = get_loss(args)
-    data_loader = get_dataloader()
+    data_loader, n_instance = get_dataloader(args)
     model.train()
 
     #additional variables
     settings_summary(args)
-    num_batches = math.ceil(len(data_loader) / args.batch_size)
+    num_batches = math.ceil(n_instance / args.batch_size)
 
     for epoch in range(args.epochs):
+        time_epoch = 0
         if epoch > 0:
             later = time.time()
             time_epoch = later - now
         now = time.time()
 
         for batch_idx, (data, target) in enumerate(data_loader):
-            if args.cuda:
+            if args.gpu:
                 data, target = data.cuda(), target.cuda()
             data, target = Variable(data), Variable(target, requires_grad=False)
             optimizer.zero_grad()
@@ -36,6 +37,7 @@ def train_execution(args, model):
             else:
                 output, probs = model(data)
                 loss = loss_fn(probs, target)
+            #pdb.set_trace()
             loss.backward()
             optimizer.step()
 
