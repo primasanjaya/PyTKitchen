@@ -1,19 +1,20 @@
-import call_dataset
-
+from utils.get_functions import *
+from utils.visualization import settings_summary
 
 def train_execution(args, model):
 
 
-    optimizer = optim.Adam(model.parameters(), lr=args.lr)
+    optimizer = get_optimizer(args,model)
 
-    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, verbose=True, patience=15, min_lr=1e-6)
+    #scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, verbose=True, patience=15, min_lr=1e-6)
 
-    loss_fn = MarginLoss(0.9, 0.1, 0.5)
-
-
-    data_loader = call_dataset(args)
+    loss_fn = get_loss(args)
+    data_loader = get_dataloader()
     model.train()
-    for batch_idx, (data, target) in enumerate(train_loader):
+
+    settings_summary(args)
+
+    for batch_idx, (data, target) in enumerate(data_loader):
         if args.cuda:
             data, target = data.cuda(), target.cuda()
         data, target = Variable(data), Variable(target, requires_grad=False)

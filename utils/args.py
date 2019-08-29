@@ -8,7 +8,7 @@ def get_args():
     parser.add_argument('--dataset', type=str, default='mnist',
                         help='dataset')
     # MODEL
-    parser.add_argument('--arch', type=str, default='capsnet',
+    parser.add_argument('--arch', type=str, default='general',
                         help='architecture')
 
     # DIRECTORY
@@ -45,6 +45,10 @@ def get_args():
                         help='learning rate (default: 0.01)')
     parser.add_argument('--routing_iterations', type=int, default=3)
     parser.add_argument('--with_reconstruction', action='store_true', default=False)
+    parser.add_argument('--loss', type=str, default=None,
+                        help='')
+    parser.add_argument('--optimizer', type=str, default=None,
+                        help='')
 
     # OTHERS
     parser.add_argument('--train', action='store_true', default=False)

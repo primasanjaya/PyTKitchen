@@ -2,7 +2,7 @@ import torch
 from torchvision import datasets, transforms
 from utils.args import get_args
 from torch.utils.data.dataset import Dataset
-from utils.preprocessing import dna_encoding
+from utils.preprocessing import *
 import numpy as np
 import csv
 

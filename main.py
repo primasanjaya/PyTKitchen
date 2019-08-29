@@ -16,9 +16,12 @@ args = get_args()
 
 model = get_model(args)
 
+
+
 if args.train:
     print('Training')
     train_execution(args,model)
+
 elif args.val:
     print('todo')
 elif args.pred:
