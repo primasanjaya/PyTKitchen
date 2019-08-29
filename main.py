@@ -12,8 +12,6 @@ from utils import *
 from execution.train.train_exec import *
 
 
-
-
 args = get_args()
 
 model = get_model(args)

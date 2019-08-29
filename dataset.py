@@ -1,6 +1,10 @@
 import torch
 from torchvision import datasets, transforms
 from utils.args import get_args
+from torch.utils.data.dataset import Dataset
+from utils.preprocessing import dna_encoding
+import numpy as np
+import csv
 
 class Splice(Dataset):
     def __init__(self, dir):
@@ -28,3 +32,8 @@ class Splice(Dataset):
         target = target.type(torch.LongTensor)
 
         return encoding,target
+
+
+
+if __name__ == "__main__":
+    print("test")
