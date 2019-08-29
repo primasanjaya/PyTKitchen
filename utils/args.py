@@ -1,5 +1,19 @@
 import argparse
 import torch
+from utils.string_processing import *
+
+def fix_dir(args):
+    args.l_w_dir = ensure_terminator(args.l_w_dir)
+    args.train_dir = ensure_terminator(args.train_dir)
+    args.groundtruth_dir = ensure_terminator(args.groundtruth_dir)
+    args.s_w_dir = ensure_terminator(args.s_w_dir)
+    args.predict_dir = ensure_terminator(args.predict_dir)
+    args.result_dir = ensure_terminator(args.result_dir)
+    args.val_dir = ensure_terminator(args.val_dir)
+    args.val_groundtruth_dir = ensure_terminator(args.val_groundtruth_dir)
+    args.l_w_name = ensure_terminator(args.l_w_name, ".pth")
+
+    return args
 
 def get_args():
     parser = argparse.ArgumentParser(description='My PyTorch Kitchen')
@@ -62,6 +76,9 @@ def get_args():
                         help='random seed (default: 1)')
     parser.add_argument('--log-interval', type=int, default=10, metavar='N',
                         help='how many batches to wait before logging training status')
+    parser.add_argument('--epoch-done', type=int, default=0,
+                        help='how many training epochs have done')
+
 
 
     args = parser.parse_args()

@@ -3,14 +3,24 @@ import torch.nn as nn
 from dataset import *
 import torch.utils.data as data
 from torch import optim
+from utils.saveload_hdd import *
 
 
 def get_model(args):
     if args.arch == 'capsnet':
         model = CapsNet(args.routing_iterations)
-
     elif args.arch == 'capsnetrecon':
         model = ReconstructionNet(args.routing_iterations,args.n_class)
+
+    model = nn.DataParallel(model)
+
+    if args.load:
+        state = load_weight(args)
+        weight = state['weight']
+
+        model_state = model.module.state_dict()
+        model_state.update(weight)
+        model.module.load_state_dict(model_state)
 
     return model
 
@@ -32,6 +42,9 @@ def get_loss(args):
 def get_dataloader(args):
     if args.dataset == 'splice':
         dataloader_class = Splice(args.train_dir)
+    elif args.dataset == 'mnist':
+        data_transform = transforms.Compose([transforms.Pad(2), transforms.RandomCrop(28),transforms.ToTensor()])
+        dataloader_class = datasets.MNIST('../data', train=True, download=True, transform=data_transform)
     else:
         dataloader_class = None
 
