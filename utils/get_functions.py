@@ -9,12 +9,20 @@ def get_model(args):
     if args.arch == 'capsnet':
         model = CapsNet(args.routing_iterations)
 
+    elif args.arch == 'capsnetrecon':
+        model = ReconstructionNet(args.routing_iterations,args.n_class)
+
+    return model
+
+
 def get_loss(args):
     if args.loss == 'bce':
         criterion = nn.BCELoss()
     elif args.loss == 'crossentropy':
         criterion = nn.CrossEntropyLoss()
     elif args.loss == 'customcapsnet':
+        criterion = MarginLoss(0.9, 0.1, 0.5)
+    elif args.loss == 'customcapsnetrecon':
         criterion = MarginLoss(0.9, 0.1, 0.5)
     else :
         criterion = None
