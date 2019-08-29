@@ -34,7 +34,6 @@ def get_args():
     # MODEL
     parser.add_argument('--arch', type=str, default='general',
                         help='architecture')
-
     # DIRECTORY
     parser.add_argument('--train-dir', type=str, default=None,
                         help='training directory')

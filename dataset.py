@@ -1,5 +1,8 @@
 import torch
 from torchvision import datasets, transforms
+import pdb
+
+pdb.set_trace()
 from utils.args import get_args
 from torch.utils.data.dataset import Dataset
 from utils.preprocessing import *
@@ -33,7 +36,6 @@ class Splice(Dataset):
 
         return encoding,target
 
-
-
 if __name__ == "__main__":
+
     print("test")

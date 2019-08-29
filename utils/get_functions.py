@@ -1,10 +1,12 @@
 from model.capsulenet.capsnet import *
+from model.birnn.birnn import *
+
 import torch.nn as nn
-from dataset import *
 import torch.utils.data as data
 from torch import optim
 from utils.saveload_hdd import *
-import pdb
+
+from utils.dataset.mnistbirnn import MNISTBiRNN
 
 
 def get_model(args):
@@ -12,6 +14,8 @@ def get_model(args):
         model = CapsNet(args.routing_iterations)
     elif args.arch == 'capsnetrecon':
         model = ReconstructionNet(args.routing_iterations,args.n_class)
+    elif args.arch == 'birnn':
+        model = BiRNN(input_size=28, hidden_size=128, num_layers=2, num_classes=args.n_class)
 
     model = nn.DataParallel(model)
 
@@ -46,6 +50,9 @@ def get_dataloader(args):
     elif args.dataset == 'mnist':
         data_transform = transforms.Compose([transforms.Pad(2), transforms.RandomCrop(28),transforms.ToTensor()])
         dataloader_class = datasets.MNIST('../data', train=True, download=True, transform=data_transform)
+    elif args.dataset == 'mnistbirnn':
+        data_transform = transforms.Compose([transforms.Pad(2), transforms.RandomCrop(28),transforms.ToTensor()])
+        dataloader_class = MNISTBiRNN('../data', train=True, transform=data_transform)
     else:
         dataloader_class = None
 
