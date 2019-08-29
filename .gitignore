@@ -1,0 +1,8 @@
+*.pyc
+data/
+__pycache__/
+*.pth
+*.jpg
+*.exe
+*.zip
+.idea/
