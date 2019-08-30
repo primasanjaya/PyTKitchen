@@ -6,14 +6,20 @@ import torch.utils.data as data
 from torch import optim
 from utils.saveload_hdd import *
 
-from utils.dataset.mnistbirnn import MNISTBiRNN
+from dataset.mnistbirnn import MNISTBiRNN
+from dataset.dataset import Splice
+from torchvision import transforms,datasets
+
 
 
 def get_model(args):
     if args.arch == 'capsnet':
         model = CapsNet(args.routing_iterations)
     elif args.arch == 'capsnetrecon':
-        model = ReconstructionNet(args.routing_iterations,args.n_class)
+        model = CapsNet(args.routing_iterations)
+        rec = ReconstructionNet(args.routing_iterations,args.n_class)
+        model = CapsNetWithReconstruction(model, rec)
+
     elif args.arch == 'birnn':
         model = BiRNN(input_size=28, hidden_size=128, num_layers=2, num_classes=args.n_class)
 
