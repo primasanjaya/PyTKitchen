@@ -9,7 +9,8 @@ from utils.saveload_hdd import *
 from dataset.mnistbirnn import MNISTBiRNN
 from dataset.splice import Splice
 from torchvision import transforms,datasets
-
+from model.segcaps.segcaps import SegCaps
+from utils.custom_loss import *
 
 
 def get_model(args):
@@ -19,9 +20,10 @@ def get_model(args):
         model = CapsNet(args.routing_iterations)
         rec = ReconstructionNet(16,args.n_class)
         model = CapsNetWithReconstruction(model, rec)
-
     elif args.arch == 'birnn':
         model = BiRNN(input_size=28, hidden_size=128, num_layers=2, num_classes=args.n_class)
+    elif args.arch == 'segcaps':
+        model = SegCaps()
 
     model = nn.DataParallel(model)
 
@@ -42,9 +44,9 @@ def get_loss(args):
     elif args.loss == 'crossentropy':
         criterion = nn.CrossEntropyLoss()
     elif args.loss == 'customcapsnet':
-        criterion = MarginLoss(0.9, 0.1, 0.5)
+        criterion = CapsNetMarginLoss(0.9, 0.1, 0.5)
     elif args.loss == 'customcapsnetrecon':
-        criterion = MarginLoss(0.9, 0.1, 0.5)
+        criterion = CapsNetReconLoss(0.9, 0.1, 0.5)
     else :
         criterion = None
     return criterion

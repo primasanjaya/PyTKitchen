@@ -25,15 +25,14 @@ def train_execution(args, model):
         now = time.time()
 
         for batch_idx, (data, target) in enumerate(data_loader):
+
             if args.gpu:
                 data, target = data.cuda(), target.cuda()
             data, target = Variable(data), Variable(target, requires_grad=False)
             optimizer.zero_grad()
             if args.loss=='customcapsnetrecon':
                 output, probs = model(data, target)
-                reconstruction_loss = F.mse_loss(output, data.view(-1, 784))
-                margin_loss = loss_fn(probs, target)
-                loss = 0.0005 * reconstruction_loss + margin_loss
+                loss = loss_fn(output,probs, target, data)
             else:
                 output, probs = model(data)
                 loss = loss_fn(probs, target)
