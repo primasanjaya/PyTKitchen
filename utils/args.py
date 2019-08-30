@@ -23,6 +23,10 @@ def load_hyperparams(args):
     args.gpu = use_gpu
     args.no_gpu = not use_gpu
 
+    if args.loss == None:
+        if args.arch =='capsnetrecon':
+            args.loss = 'customcapsnetrecon'
+
     return args
 
 def get_args():

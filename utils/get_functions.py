@@ -7,7 +7,7 @@ from torch import optim
 from utils.saveload_hdd import *
 
 from dataset.mnistbirnn import MNISTBiRNN
-from dataset.dataset import Splice
+from dataset.splice import Splice
 from torchvision import transforms,datasets
 
 
@@ -17,7 +17,7 @@ def get_model(args):
         model = CapsNet(args.routing_iterations)
     elif args.arch == 'capsnetrecon':
         model = CapsNet(args.routing_iterations)
-        rec = ReconstructionNet(args.routing_iterations,args.n_class)
+        rec = ReconstructionNet(16,args.n_class)
         model = CapsNetWithReconstruction(model, rec)
 
     elif args.arch == 'birnn':

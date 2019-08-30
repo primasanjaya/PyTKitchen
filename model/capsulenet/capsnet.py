@@ -116,7 +116,7 @@ class ReconstructionNet(nn.Module):
         x = x.view(-1, self.n_dim * self.n_classes)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = F.sigmoid(self.fc3(x))
+        x = torch.sigmoid(self.fc3(x))
         return x
 
 
