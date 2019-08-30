@@ -22,7 +22,7 @@ class CapsNetMarginLoss(nn.Module):
         self.lambda_ = lambda_
 
     def forward(self, lengths, targets, size_average=True):
-        pdb.set_trace()
+        #pdb.set_trace()
 
         t = torch.zeros(lengths.size()).long()
         if targets.is_cuda:

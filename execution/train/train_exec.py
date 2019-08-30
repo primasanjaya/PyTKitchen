@@ -5,7 +5,6 @@ from utils.saveload_hdd import *
 import math
 import time
 
-
 def train_execution(args, model):
     #setup
     optimizer = get_optimizer(args,model)

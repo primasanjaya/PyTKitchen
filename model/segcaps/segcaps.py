@@ -1,8 +1,8 @@
+import pdb
 import torch
 import torch.nn as nn
-from model.capsulenet.capsnet import CapsLayer
-from activation.activation import *
-import model.segcaps.nn_ as nn_
+import pdb
+import numpy as np
 
 class CapsuleLayer(nn.Module):
     def __init__(self, t_0,z_0, op, k, s, t_1, z_1, routing):
@@ -80,7 +80,7 @@ class CapsuleLayer(nn.Module):
                 r_t = r_t.unsqueeze(4)  # [N, H_1, W_1,t_1, 1]
                 r_t_mul_u_hat_t_list.append(r_t * u_hat_t)  # [N, H_1, W_1, t_1, z_1]
             p = sum(r_t_mul_u_hat_t_list)  # [N, H_1, W_1, t_1, z_1]
-            v = squash(p)
+            v = self.squash(p)
             if d < routing - 1:
                 b_t_list_ = []
                 for b_t, u_hat_t in zip(b_t_list, u_hat_t_list_):
@@ -94,11 +94,18 @@ class CapsuleLayer(nn.Module):
         # print(v.grad)
         return v
 
+    def squash(self, p):
+        p_norm_sq = (p * p).sum(-1, True)
+        p_norm = (p_norm_sq + 1e-9).sqrt()
+        v = p_norm_sq / (1. + p_norm_sq) * p / p_norm
+        return v
+
 class SegCaps(nn.Module):
-    def __init__(self):
+    def __init__(self, in_channel = 1):
+        self.in_channel = in_channel
         super().__init__()
         self.conv_1 = nn.Sequential(
-            nn.Conv2d(3, 16, 5, 1, padding=2,bias=False),
+            nn.Conv2d(self.in_channel, 16, 5, 1, padding=2,bias=False),
 
         )
         self.step_1 = nn.Sequential(  # 1/2
@@ -126,6 +133,7 @@ class SegCaps(nn.Module):
         )
     def forward(self, x):
         x = self.conv_1(x)
+
         x.unsqueeze_(1)
 
         skip_1 = x  # [N,1,16,H,W]
@@ -139,8 +147,8 @@ class SegCaps(nn.Module):
 
         x = self.step_3(x)  # [N,8,32,H/8,W/8]
 
-
         x = self.step_4(x)  # [N,8,32,H/4,W/4]
+
         x = torch.cat((x, skip_3), 1)  # [N,16,32,H/4,W/4]
 
         x = self.step_5(x)  # [N,4,32,H/4,W/4]
@@ -161,3 +169,21 @@ class SegCaps(nn.Module):
         out = (x.pow(2)).sum(1, True)+1e-9
         out=out.sqrt()
         return out
+
+
+if __name__ == '__main__':
+    import nn_
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    input = np.zeros((10, 1, 512, 512))
+    net = SegCaps(in_channel=1).to(device)
+
+    img = torch.tensor(input, device=device).float().to(device)
+
+    pred = net(img)
+
+    pdb.set_trace()
+
+else:
+    import model.segcaps.nn_ as nn_

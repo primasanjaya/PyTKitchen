@@ -26,11 +26,10 @@ def load_hyperparams(args):
     if args.loss == None:
         if args.arch =='capsnetrecon':
             args.loss = 'customcapsnetrecon'
-        # if args.arch =='segcaps':
-
-
-
-
+        if args.arch =='capsnet':
+            args.loss = 'customcapsnet'
+        if args.arch =='sefcaps':
+            args.loss = 'customsegcaps'
     return args
 
 def get_args():

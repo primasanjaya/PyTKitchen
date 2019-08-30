@@ -23,7 +23,7 @@ def get_model(args):
     elif args.arch == 'birnn':
         model = BiRNN(input_size=28, hidden_size=128, num_layers=2, num_classes=args.n_class)
     elif args.arch == 'segcaps':
-        model = SegCaps()
+        model = SegCaps(in_channel=1)
 
     model = nn.DataParallel(model)
 
@@ -47,6 +47,9 @@ def get_loss(args):
         criterion = CapsNetMarginLoss(0.9, 0.1, 0.5)
     elif args.loss == 'customcapsnetrecon':
         criterion = CapsNetReconLoss(0.9, 0.1, 0.5)
+    elif args.loss == 'customsegcaps':
+        criterion = SegCapsLoss()
+
     else :
         criterion = None
     return criterion
